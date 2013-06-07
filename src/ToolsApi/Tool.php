@@ -29,6 +29,11 @@ class Tool
         $this->arguments[] = array('local_folder', $folder_path);
     }
     
+    public function addLocalOutputFolder($folder_path)
+    {
+        $this->arguments[] = array('local_output_folder', $folder_path);
+    }
+    
     public function execute()
     {
         $post_fields = array(
@@ -37,6 +42,8 @@ class Tool
         
         $pos = 0;
         $next_subfile_id = 0;
+        
+        $output_folders = array();
         
         foreach ($this->arguments as $argument)
         {
@@ -61,19 +68,66 @@ class Tool
                 
                 $post_fields['folder' . $pos] = implode(',', $subfile_ids_for_folder);
             }
+            elseif ($argument[0] === 'local_output_folder')
+            {
+                $post_fields['outputfolder' . $pos] = 'true';
+                $output_folders[$pos] = $argument[1];
+            }
             $pos++;
         }
-        
+
         $this->request->addPostFields($post_fields);
         
-        // $temp_file = tempnam(sys_get_temp_dir(), 'ToolsApiResponse');
-        // $responseBody = \Guzzle\Http\EntityBody::factory(fopen($temp_file, 'w+'));
-        // $request->setResponseBody($responseBody);
-        $response = $this->request->send();
-        
-        return $response->getBody(true);
-        // unlink($temp_file);
-        // var_dump((string) $response->getBody());
-        // var_dump($response);
+        if (count($output_folders))
+        {
+            $temp_file = tempnam(sys_get_temp_dir(), 'ToolsApiResponse') . '.zip';
+            $responseBody = \Guzzle\Http\EntityBody::factory(fopen($temp_file, 'w+'));
+            $this->request->setResponseBody($responseBody);
+            $response = $this->request->send();
+            
+            $zip = new \ZipArchive();
+            $zip->open($temp_file);
+            foreach ($output_folders as $i => $target_path)
+            {
+                if (!is_dir($target_path))
+                {
+                    @mkdir($target_path);
+                }
+                
+                for($p = 0; $p < $zip->numFiles; $p++)
+                {
+                    $path_to_extract = $zip->getNameIndex($p);
+                    
+                    /*
+                     * FIXME: problems, if we have outputfolder1 and outputfolder10
+                     */
+                    if (substr($path_to_extract, 0, strlen('outputfolder' . $i)) === 'outputfolder' . $i )
+                    {
+                        $path_for_this_file  = $target_path . '/' . substr($path_to_extract, strlen('outputfolder' . $i) + 1);
+                        if (realpath($path_for_this_file) !== realpath($target_path))
+                        {
+                            $folder_for_this_file = dirname($path_for_this_file);
+                            if (!is_dir($folder_for_this_file))
+                            {
+                                @mkdir($folder_for_this_file);
+                            }
+                            $path_without_folder = substr($path_to_extract, strlen('outputfolder' . $i) + 1);
+                            $zip->renameIndex($p, $path_without_folder);
+                            $zip->extractTo($folder_for_this_file . '/', array($path_without_folder));
+                        }
+                    }
+                }
+            }
+            
+            $zip->close();
+            
+            unlink($temp_file);
+            return '';
+        }
+        else
+        {
+            $response = $this->request->send();
+            return $response->getBody(true);
+        }
     }
 }

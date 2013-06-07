@@ -6,5 +6,5 @@ $tool = $app->createTool('fontcustom');
 $tool->addArgument('compile');
 $tool->addLocalFolder(dirname(__FILE__) . '/icons/');
 $tool->addArgument('--debug');
-$tool->addArgument('--output=out/');
+$tool->addLocalOutputFolder(dirname(__FILE__) . '/out/');
 echo $tool->execute();
