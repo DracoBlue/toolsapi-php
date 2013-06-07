@@ -1,0 +1,25 @@
+{
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "naith/naith",
+                "version": "1.1.1",
+                "source": {
+                    "url": "https://github.com/DracoBlue/naith.git",
+                    "type": "git",
+                    "reference": "298a0068bfc3f1204bcc34506a0aa1e35346c109"
+                }
+            }
+        }
+    ],
+
+    "require": {
+        "naith/naith": "*",
+        "monolog/monolog": "1.*@stable",
+        "guzzle/guzzle": "3.5.*@stable"
+    },
+    "autoload": {
+        "psr-0": {"ToolsApi": "src/"}
+    }
+}
