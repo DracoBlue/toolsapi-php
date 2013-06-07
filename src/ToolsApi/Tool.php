@@ -16,13 +16,37 @@ class Tool
     
     public function addArgument($key, $value = null)
     {
-        $this->arguments[] = $key;
+        $this->arguments[] = array('string', $key);
+    }
+    
+    public function addLocalFile($file_path)
+    {
+        $this->arguments[] = array('local_file', $file_path);
     }
     
     public function execute()
     {
-        // $request->addPostFiles($files);
-        $this->request->addPostFields(array('args' => $this->arguments));
+        $post_fields = array(
+            'args' => array()
+        );
+        
+        $pos = 0;
+        
+        foreach ($this->arguments as $argument)
+        {
+            if ($argument[0] === 'string')
+            {
+                $post_fields['arg' . $pos] = $argument[1];
+            }
+            elseif ($argument[0] === 'local_file')
+            {
+                $this->request->addPostFile('file' . $pos, $argument[1]);
+            }
+            $pos++;
+        }
+        
+        $this->request->addPostFields($post_fields);
+        
         // $temp_file = tempnam(sys_get_temp_dir(), 'ToolsApiResponse');
         // $responseBody = \Guzzle\Http\EntityBody::factory(fopen($temp_file, 'w+'));
         // $request->setResponseBody($responseBody);
