@@ -13,12 +13,13 @@ class ToolsApi
     {
         $request = $this->client->post($cmd);
         $request->addPostFiles($files);
-        $temp_file = tempnam(sys_get_temp_dir(), 'ToolsApiResponse');
-        $responseBody = \Guzzle\Http\EntityBody::factory(fopen($temp_file, 'w+'));
-        $request->setResponseBody($responseBody);
+        $request->addPostFields(array('args' => array('toolsapi.com')));
+        // $temp_file = tempnam(sys_get_temp_dir(), 'ToolsApiResponse');
+        // $responseBody = \Guzzle\Http\EntityBody::factory(fopen($temp_file, 'w+'));
+        // $request->setResponseBody($responseBody);
         $response = $request->send();
-        unlink($temp_file);
-        // var_dump((string) $response->getBody());
+        // unlink($temp_file);
+        var_dump((string) $response->getBody());
         // var_dump($response);
     }
 }
