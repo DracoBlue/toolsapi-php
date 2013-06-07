@@ -24,6 +24,11 @@ class Tool
         $this->arguments[] = array('local_file', $file_path);
     }
     
+    public function addLocalFolder($folder_path)
+    {
+        $this->arguments[] = array('local_folder', $folder_path);
+    }
+    
     public function execute()
     {
         $post_fields = array(
@@ -31,6 +36,7 @@ class Tool
         );
         
         $pos = 0;
+        $next_subfile_id = 0;
         
         foreach ($this->arguments as $argument)
         {
@@ -41,6 +47,19 @@ class Tool
             elseif ($argument[0] === 'local_file')
             {
                 $this->request->addPostFile('file' . $pos, $argument[1]);
+            }
+            elseif ($argument[0] === 'local_folder')
+            {
+                $subfile_ids_for_folder = array();
+                foreach (glob($argument[1] . '/*') as $file_path)
+                {
+                    $subfile_id = $next_subfile_id;
+                    $this->request->addPostFile('subfile' . $subfile_id, $file_path);
+                    $subfile_ids_for_folder[] = $subfile_id;
+                    $next_subfile_id++;
+                };
+                
+                $post_fields['folder' . $pos] = implode(',', $subfile_ids_for_folder);
             }
             $pos++;
         }
