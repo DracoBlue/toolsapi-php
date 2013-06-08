@@ -13,20 +13,11 @@ class ToolsApi
     {
         $response = $this->client->get()->send();
         
-        if (!$response instanceof \ToolsApi\HalResponse)
-        {
-            throw new Exception('Invalid Response on Api Index (expected HalReponse!)');
-        }
+        $link_for_tool = $this->client->navigateByLinks(array(
+            'http://toolsapi.com/rels/tools',
+            'http://toolsapi.com/rels/' . $name
+        ));
         
-        $tools_response = $response->getLink('http://toolsapi.com/rels/tools')->get()->send();
-        
-        if (!$tools_response instanceof \ToolsApi\HalResponse)
-        {
-            throw new Exception('Invalid Response on Tools Index (expected HalReponse!)');
-        }
-        
-        $link_for_tool = $tools_response->getLink('http://toolsapi.com/rels/' . $name);
-        
-        return new ToolsApi\Tool($link_for_tool->post(), $name);
+        return new \ToolsApi\Tool($link_for_tool->post(), $name);
     }
 }
