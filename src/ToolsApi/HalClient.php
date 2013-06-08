@@ -18,7 +18,7 @@ class HalClient extends \Guzzle\Http\Client
         
         if (!$response instanceof \ToolsApi\HalResponse)
         {
-            throw new Exception('Invalid Response on Api Index (expected HalReponse!)');
+            throw new \Exception('Invalid Response on Api Index (expected HalReponse!)');
         }
         
         for ($i = 0; $i < count($links) - 2; $i++)
@@ -27,7 +27,7 @@ class HalClient extends \Guzzle\Http\Client
             
             if (!$response instanceof \ToolsApi\HalResponse)
             {
-                throw new Exception('Invalid Response on Link ' . $links[$i] . ' (expected HalReponse!)');
+                throw new \Exception('Invalid Response on Link ' . $links[$i] . ' (expected HalReponse!)');
             }
         }
         
@@ -40,7 +40,7 @@ class HalClient extends \Guzzle\Http\Client
         
         if (is_array($responses))
         {
-            $responses = array();
+            $converted_responses = array();
             
             foreach ($responses as $response)
             {
