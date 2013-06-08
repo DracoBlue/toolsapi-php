@@ -98,10 +98,7 @@ class Tool
                 {
                     $path_to_extract = $zip->getNameIndex($p);
                     
-                    /*
-                     * FIXME: problems, if we have outputfolder1 and outputfolder10
-                     */
-                    if (substr($path_to_extract, 0, strlen('outputfolder' . $i)) === 'outputfolder' . $i )
+                    if (substr($path_to_extract, 0, strlen('outputfolder' . $i) + 1) === 'outputfolder' . $i . '/' )
                     {
                         $path_for_this_file  = $target_path . '/' . substr($path_to_extract, strlen('outputfolder' . $i) + 1);
                         if (realpath($path_for_this_file) !== realpath($target_path))
@@ -112,6 +109,9 @@ class Tool
                                 @mkdir($folder_for_this_file);
                             }
                             $path_without_folder = substr($path_to_extract, strlen('outputfolder' . $i) + 1);
+                            /*
+                             * This CAN make problems, if a project has a folder called outputfolder1 ...
+                             */
                             $zip->renameIndex($p, $path_without_folder);
                             $zip->extractTo($folder_for_this_file . '/', array($path_without_folder));
                         }
