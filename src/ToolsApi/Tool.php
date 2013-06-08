@@ -7,6 +7,7 @@ class Tool
     protected $name = null;
     
     protected $arguments = array();
+    protected $local_file_as_stdin = null;
     
     public function __construct($request, $name)
     {
@@ -17,6 +18,11 @@ class Tool
     public function addArgument($key, $value = null)
     {
         $this->arguments[] = array('string', $key);
+    }
+    
+    public function pipeLocalFileToStdIn($file_path)
+    {
+        $this->local_file_as_stdin = $file_path;
     }
     
     public function addLocalFile($file_path)
@@ -74,6 +80,11 @@ class Tool
                 $output_folders[$pos] = $argument[1];
             }
             $pos++;
+        }
+
+        if ($this->local_file_as_stdin)
+        {
+            $this->request->addPostFile('stdinfile', $this->local_file_as_stdin);
         }
 
         $this->request->addPostFields($post_fields);
