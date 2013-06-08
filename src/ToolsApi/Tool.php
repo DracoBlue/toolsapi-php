@@ -81,8 +81,7 @@ class Tool
         if (count($output_folders))
         {
             $temp_file = tempnam(sys_get_temp_dir(), 'ToolsApiResponse') . '.zip';
-            $responseBody = \Guzzle\Http\EntityBody::factory(fopen($temp_file, 'w+'));
-            $this->request->setResponseBody($responseBody);
+            $this->request->setResponseBody(fopen($temp_file, 'w'));
             $response = $this->request->send();
             
             $zip = new \ZipArchive();
