@@ -35,9 +35,9 @@ class Tool
         $this->arguments[] = array('local_folder', $folder_path);
     }
     
-    public function addLocalOutputFolder($folder_path)
+    public function addLocalOutputFolder($folder_path, $key = '')
     {
-        $this->arguments[] = array('local_output_folder', $folder_path);
+        $this->arguments[] = array('local_output_folder', $folder_path, $key);
     }
     
     public function execute()
@@ -76,7 +76,7 @@ class Tool
             }
             elseif ($argument[0] === 'local_output_folder')
             {
-                $post_fields['outputfolder' . $pos] = 'true';
+                $post_fields['outputfolder' . $pos] = $argument[2];
                 $output_folders[$pos] = $argument[1];
             }
             $pos++;
