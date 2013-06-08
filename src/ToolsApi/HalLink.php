@@ -41,7 +41,7 @@ class HalLink
 
     public function patch($headers = null, $body = null)
     {
-        return $this->patch($this->uri, $headers, $body);
+        return $this->client->patch($this->uri, $headers, $body);
     }
 
     public function post($headers = null, $postBody = null)
