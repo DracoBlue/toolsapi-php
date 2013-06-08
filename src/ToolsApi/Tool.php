@@ -8,9 +8,9 @@ class Tool
     
     protected $arguments = array();
     
-    public function __construct($client, $name)
+    public function __construct($request, $name)
     {
-        $this->request = $client->post($name);
+        $this->request = $request;
         $this->name = $name;
     }
     
