@@ -21,7 +21,7 @@ class HalClient extends \Guzzle\Http\Client
             throw new \Exception('Invalid Response on Api Index (expected HalReponse!)');
         }
         
-        for ($i = 0; $i < count($links) - 2; $i++)
+        for ($i = 0; $i < count($links) - 1; $i++)
         {
             $response = $response->getLink($links[$i])->get()->send();
             
