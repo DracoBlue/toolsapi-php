@@ -8,6 +8,7 @@ class Tool
     
     protected $arguments = array();
     protected $local_file_as_stdin = null;
+    protected $local_file_as_stdout = null;
     
     public function __construct($request, $name)
     {
@@ -23,6 +24,11 @@ class Tool
     public function pipeLocalFileToStdIn($file_path)
     {
         $this->local_file_as_stdin = $file_path;
+    }
+    
+    public function pipeStdOutToLocalFile($file_path)
+    {
+        $this->local_file_as_stdout = $file_path;
     }
     
     public function addLocalFile($file_path)
@@ -87,9 +93,14 @@ class Tool
             $this->request->addPostFile('stdinfile', $this->local_file_as_stdin);
         }
 
+        if ($this->local_file_as_stdout)
+        {
+            $post_fields['stdoutfile'] = 'true';
+        }
+
         $this->request->addPostFields($post_fields);
         
-        if (count($output_folders))
+        if (count($output_folders) || $this->local_file_as_stdout)
         {
             $temp_file = tempnam(sys_get_temp_dir(), 'ToolsApiResponse') . '.zip';
             $this->request->setResponseBody(fopen($temp_file, 'w'));
@@ -97,6 +108,19 @@ class Tool
             
             $zip = new \ZipArchive();
             $zip->open($temp_file);
+            
+            if ($this->local_file_as_stdout)
+            {
+                if (!$zip->renameName('stdout.txt', basename($this->local_file_as_stdout)))
+                {
+                    throw new \Exception('Cannot rename stdout.txt to '  . basename($this->local_file_as_stdout));
+                }
+                if (!$zip->extractTo(dirname($this->local_file_as_stdout), array(basename($this->local_file_as_stdout))))
+                {
+                    throw new \Exception('Cannot extract ' . basename($this->local_file_as_stdout) . ' to ' . dirname($this->local_file_as_stdout));
+                }
+            }
+            
             foreach ($output_folders as $i => $target_path)
             {
                 if (!is_dir($target_path))
