@@ -7,6 +7,7 @@ class ToolsApi
     public function __construct($url, $username, $password)
     {
         $this->client = new \ToolsApi\HalClient($url);
+        $this->client->getDefaultHeaders()->set('Accept', 'application/hal+json');
         $this->client->getDefaultHeaders()->set('Authorization', 'Basic ' . base64_encode($username . ':' . $password));
     }
     

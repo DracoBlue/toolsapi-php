@@ -1,6 +1,6 @@
 <?php
 $client = new \ToolsApi\HalClient('http://toolsapi.com/');
-
+$client->getDefaultHeaders()->set('Accept', 'application/hal+json');
 /*
  * Test with multiple navigations
  */
