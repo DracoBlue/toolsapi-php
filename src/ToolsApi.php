@@ -4,9 +4,10 @@ class ToolsApi
 {
     protected $client = null;
     
-    public function __construct($url, $key)
+    public function __construct($url, $username, $password)
     {
         $this->client = new \ToolsApi\HalClient($url);
+        $this->client->getDefaultHeaders()->set('Authorization', 'Basic ' . base64_encode($username . ':' . $password));
     }
     
     public function createTool($name)
