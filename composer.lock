@@ -3,8 +3,42 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "7ea44c7b77bea5c6967a7e78ae27976d",
+    "hash": "eaa50fa6a874ecbbf359155fca2a1dd3",
     "packages": [
+        {
+            "name": "dracoblue/naith",
+            "version": "1.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DracoBlue/naith.git",
+                "reference": "1.1.1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DracoBlue/naith/zipball/1.1.1",
+                "reference": "1.1.1",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.0"
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "DracoBlue",
+                    "email": "JanS@DracoBlue.de"
+                }
+            ],
+            "description": "A simple php test runner, without the bloat of other frameworks.",
+            "keywords": [
+                "testing"
+            ],
+            "time": "2013-06-10 14:48:42"
+        },
         {
             "name": "guzzle/guzzle",
             "version": "v3.5.0",
@@ -158,16 +192,6 @@
                 "psr-3"
             ],
             "time": "2013-04-23 10:09:48"
-        },
-        {
-            "name": "naith/naith",
-            "version": "1.1.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/DracoBlue/naith.git",
-                "reference": "298a0068bfc3f1204bcc34506a0aa1e35346c109"
-            },
-            "type": "library"
         },
         {
             "name": "psr/log",

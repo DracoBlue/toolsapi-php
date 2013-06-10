@@ -8,11 +8,11 @@ help:
 
 test:
 
-	@vendor/naith/naith/naith run
+	@vendor/dracoblue/naith/naith run
 
 test-constant:
 
-	@vendor/naith/naith/naith run-constant
+	@vendor/dracoblue/naith/naith run-constant
 
 install-composer:
 
