@@ -108,6 +108,8 @@ class Tool
             
             $zip = new \ZipArchive();
             $zip->open($temp_file);
+
+            $response = '';
             
             if ($this->local_file_as_stdout)
             {
@@ -119,6 +121,22 @@ class Tool
                 {
                     throw new \Exception('Cannot extract ' . basename($this->local_file_as_stdout) . ' to ' . dirname($this->local_file_as_stdout));
                 }
+            }
+            elseif (count($output_folders))
+            {
+                $std_temp_file = tempnam(sys_get_temp_dir(), 'toolsapi-stdout-');
+
+                if (!$zip->renameName('stdout.txt', basename($std_temp_file)))
+                {
+                    throw new \Exception('Cannot rename stdout.txt to '  . basename($std_temp_file));
+                }
+                if (!$zip->extractTo(dirname($std_temp_file), array(basename($std_temp_file))))
+                {
+                    throw new \Exception('Cannot extract stdout.txt to ' . $std_temp_file);
+                }
+                
+                $response = file_get_contents($std_temp_file);
+                unlink($std_temp_file);
             }
             
             foreach ($output_folders as $i => $target_path)
@@ -156,7 +174,7 @@ class Tool
             $zip->close();
             
             unlink($temp_file);
-            return '';
+            return $response;
         }
         else
         {
