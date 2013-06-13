@@ -19,4 +19,5 @@ $tool->addArgument('compile');
 $tool->addLocalFolder(dirname(__FILE__) . '/icons/');
 $tool->addArgument('--debug');
 $tool->addLocalOutputFolder(dirname(__FILE__) . '/fontcustom-out/', '--output=');
-echo $tool->execute();
+$response = $tool->execute();
+assert(strpos($response, 'fontcustom.css') !== false);
