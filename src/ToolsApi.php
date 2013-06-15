@@ -3,12 +3,17 @@
 class ToolsApi
 {
     protected $client = null;
+    protected $username = null;
+    protected $url = null;
     
     public function __construct($url, $username, $password)
     {
         $this->client = new \ToolsApi\HalClient($url);
         $this->client->getDefaultHeaders()->set('Accept', 'application/hal+json');
         $this->client->getDefaultHeaders()->set('Authorization', 'Basic ' . base64_encode($username . ':' . $password));
+
+        $this->username = $username;
+        $this->url = $url;
     }
 
     public static function createInstance()
@@ -85,5 +90,15 @@ class ToolsApi
         $response = json_decode($account_link->get()->send()->getBody(true), true);
         
         return $response['usage'];
+    }
+
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    public function getUsername()
+    {
+        return $this->username;
     }
 }
