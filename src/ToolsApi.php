@@ -57,6 +57,22 @@ class ToolsApi
         
         return new \ToolsApi\Tool($link_for_tool->post(), $name);
     }
+
+    public function getTools()
+    {
+        $link_for_tools = $this->client->navigateByLinks(array(
+            'http://toolsapi.com/rels/tools'
+        ));
+
+        $tools = array();
+
+        foreach ($link_for_tools->get()->send()->getLinks('http://toolsapi.com/rels/tool') as $link_for_tool)
+        {
+            $tools[] = new \ToolsApi\Tool($link_for_tool->post(), $link_for_tool->getTitle());
+        }
+
+        return $tools;
+    }
     
     public function getUsage()
     {
