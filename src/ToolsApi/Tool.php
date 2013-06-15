@@ -15,6 +15,11 @@ class Tool
         $this->request = $request;
         $this->name = $name;
     }
+
+    public function getName()
+    {
+        return $this->name;
+    }
     
     public function addArgument($key, $value = null)
     {
