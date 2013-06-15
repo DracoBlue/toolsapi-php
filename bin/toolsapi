@@ -1,0 +1,55 @@
+#!/usr/bin/env php
+<?php
+require_once(dirname(__FILE__) . '/../vendor/autoload.php');
+
+$tools_api = ToolsApi::createInstance();
+
+if (!isset($_SERVER['argv'][1]))
+{
+    echo "Invalid argument. Use --help.";
+    exit(1);
+}
+
+if ($_SERVER['argv'][1] === '--help')
+{
+    echo "Available Options:" . PHP_EOL;
+    echo "  --help" . PHP_EOL;
+    echo "    show this information" . PHP_EOL;
+    echo "  --list" . PHP_EOL;
+    echo "    show all available tools" . PHP_EOL;
+    echo "  --status" . PHP_EOL;
+    echo "    show information about the logged in account" . PHP_EOL;
+    echo "  toolname argument0 argument1 ... argumentn " . PHP_EOL;
+    echo "    run this command with the following arguments (e.g. toolsapi dig google.com)" . PHP_EOL;
+    exit(1);
+}
+
+if ($_SERVER['argv'][1] === '--list')
+{
+    echo "Available Tools: " . PHP_EOL;
+    foreach ($tools_api->getTools() as $tool)
+    {
+        echo " - " . $tool->getName() . PHP_EOL;
+    }
+    exit(0);
+}
+
+if ($_SERVER['argv'][1] === '--status')
+{
+    echo "Status: " . PHP_EOL;
+    echo " - url: " . $tools_api->getUrl() . PHP_EOL;
+    echo " - username: " . $tools_api->getUsername() . PHP_EOL;
+    echo " - usage: " . $tools_api->getUsage() . PHP_EOL;
+    exit(0);
+}
+
+
+$tool = $tools_api->createTool($_SERVER['argv'][1]);
+
+for ($i = 2; $i < count($_SERVER['argv']) - 1; $i++)
+{
+    $tool->addArgument($_SERVER['argv'][$i]);
+} 
+
+echo $tool->execute();
+
