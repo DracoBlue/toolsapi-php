@@ -17,8 +17,19 @@ class HalLink
         
         $this->client = $client;
         $this->uri = $data['href'];
+        $this->data = $data;
     }
     
+    public function getTitle()
+    {
+        if (isset($this->data['title']))
+        {
+            return $this->data['title'];
+        }
+
+        return '';
+    }
+
     public function get($headers = null, $body = null)
     {
         return $this->client->get($this->uri, $headers, $body);
