@@ -15,7 +15,7 @@ class ToolsApi
     {
         $properties_file_paths = array(
             getcwd() . '/toolsapi.properties',
-            '~/toolsapi.properties',
+            (isset($_SERVER['HOME']) ? $_SERVER['HOME'] : '~'). '/toolsapi.properties',
             '/etc/toolsapi.properties',
         );
 
