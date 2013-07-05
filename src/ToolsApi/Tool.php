@@ -50,6 +50,11 @@ class Tool
     {
         $this->arguments[] = array('local_output_folder', $folder_path, $key);
     }
+
+    public function addLocalOutputFile($file_path, $key = '')
+    {
+        $this->arguments[] = array('local_output_file', $file_path, $key);
+    }
     
     public function execute()
     {
@@ -61,6 +66,7 @@ class Tool
         $next_subfile_id = 0;
         
         $output_folders = array();
+        $output_files = array();
         
         foreach ($this->arguments as $argument)
         {
@@ -90,6 +96,13 @@ class Tool
                 $post_fields['outputfolder' . $pos] = $argument[2];
                 $output_folders[$pos] = $argument[1];
             }
+             elseif ($argument[0] === 'local_output_file')
+            {
+                $post_fields['outputfile' . $pos] = $argument[2];
+                $post_fields['outputfilename' . $pos] = basename($argument[1]);
+                $output_files[$pos] = $argument[1];
+            }
+
             $pos++;
         }
 
@@ -105,7 +118,7 @@ class Tool
 
         $this->request->addPostFields($post_fields);
         
-        if (count($output_folders) || $this->local_file_as_stdout)
+        if (count($output_folders) || $this->local_file_as_stdout || count($output_files))
         {
             $temp_file = tempnam(sys_get_temp_dir(), 'ToolsApiResponse') . '.zip';
             $this->request->setResponseBody(fopen($temp_file, 'w'));
@@ -127,7 +140,7 @@ class Tool
                     throw new \Exception('Cannot extract ' . basename($this->local_file_as_stdout) . ' to ' . dirname($this->local_file_as_stdout));
                 }
             }
-            elseif (count($output_folders))
+            elseif (count($output_folders) || count($output_files))
             {
                 $std_temp_file = tempnam(sys_get_temp_dir(), 'toolsapi-stdout-');
 
@@ -144,6 +157,29 @@ class Tool
                 unlink($std_temp_file);
             }
             
+            foreach ($output_files as $i => $path_for_this_file)
+            {
+                for($p = 0; $p < $zip->numFiles; $p++)
+                {
+                    $path_to_extract = $zip->getNameIndex($p);
+                    
+                    if ($path_to_extract === 'outputfile' . $i)
+                    {
+                        $folder_for_this_file = dirname($path_for_this_file);
+                        if (!is_dir($folder_for_this_file))
+                        {
+                            @mkdir($folder_for_this_file);
+                        }
+
+                        /*
+                         * This CAN make problems, if a project has a folder/file, which is called like the target outputfile ....
+                         */
+                        $zip->renameIndex($p, basename($path_for_this_file));
+                        $zip->extractTo($folder_for_this_file . '/', array(basename($path_for_this_file)));
+                    }
+                }
+            }
+
             foreach ($output_folders as $i => $target_path)
             {
                 if (!is_dir($target_path))
