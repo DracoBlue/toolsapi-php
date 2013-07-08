@@ -19,4 +19,5 @@ $tool->addArgument('-output-directory');
 $tool->addLocalOutputFolder(dirname(__FILE__) . '/pdflatex-out/');
 $tool->addLocalFile(dirname(__FILE__) . '/fixtures/valid_latex.tex');
 $tool->pipeStdOutToLocalFile(dirname(__FILE__) . '/pdflatex-out-stdout.txt');
-echo $tool->execute();
+$tool->pipeStdErrToLocalFile(dirname(__FILE__) . '/pdflatex-out-stderr.txt');
+$tool->execute();

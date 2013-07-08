@@ -9,6 +9,7 @@ class Tool
     protected $arguments = array();
     protected $local_file_as_stdin = null;
     protected $local_file_as_stdout = null;
+    protected $local_file_as_stderr = null;
     
     public function __construct($request, $name)
     {
@@ -34,6 +35,11 @@ class Tool
     public function pipeStdOutToLocalFile($file_path)
     {
         $this->local_file_as_stdout = $file_path;
+    }
+    
+    public function pipeStdErrToLocalFile($file_path)
+    {
+        $this->local_file_as_stderr = $file_path;
     }
     
     public function addLocalFile($file_path)
@@ -115,10 +121,15 @@ class Tool
         {
             $post_fields['stdoutfile'] = 'true';
         }
+        
+        if ($this->local_file_as_stderr)
+        {
+            $post_fields['stderrfile'] = 'true';
+        }
 
         $this->request->addPostFields($post_fields);
         
-        if (count($output_folders) || $this->local_file_as_stdout || count($output_files))
+        if (count($output_folders) || $this->local_file_as_stdout || $this->local_file_as_stderr || count($output_files))
         {
             $temp_file = tempnam(sys_get_temp_dir(), 'ToolsApiResponse') . '.zip';
             $this->request->setResponseBody(fopen($temp_file, 'w'));
@@ -128,7 +139,19 @@ class Tool
             $zip->open($temp_file);
 
             $response = '';
-            
+
+            if ($this->local_file_as_stderr)
+            {
+                if (!$zip->renameName('stderr.txt', basename($this->local_file_as_stderr)))
+                {
+                    throw new \Exception('Cannot rename stderr.txt to '  . basename($this->local_file_as_stderr));
+                }
+                if (!$zip->extractTo(dirname($this->local_file_as_stderr), array(basename($this->local_file_as_stderr))))
+                {
+                    throw new \Exception('Cannot extract ' . basename($this->local_file_as_stderr) . ' to ' . dirname($this->local_file_as_stderr));
+                }
+            }
+                        
             if ($this->local_file_as_stdout)
             {
                 if (!$zip->renameName('stdout.txt', basename($this->local_file_as_stdout)))
@@ -140,22 +163,20 @@ class Tool
                     throw new \Exception('Cannot extract ' . basename($this->local_file_as_stdout) . ' to ' . dirname($this->local_file_as_stdout));
                 }
             }
-            elseif (count($output_folders) || count($output_files))
-            {
-                $std_temp_file = tempnam(sys_get_temp_dir(), 'toolsapi-stdout-');
+            
+            $std_temp_file = tempnam(sys_get_temp_dir(), 'toolsapi-output-');
 
-                if (!$zip->renameName('stdout.txt', basename($std_temp_file)))
-                {
-                    throw new \Exception('Cannot rename stdout.txt to '  . basename($std_temp_file));
-                }
-                if (!$zip->extractTo(dirname($std_temp_file), array(basename($std_temp_file))))
-                {
-                    throw new \Exception('Cannot extract stdout.txt to ' . $std_temp_file);
-                }
-                
-                $response = file_get_contents($std_temp_file);
-                unlink($std_temp_file);
+            if (!$zip->renameName('output.txt', basename($std_temp_file)))
+            {
+                throw new \Exception('Cannot rename output.txt to '  . basename($std_temp_file));
             }
+            if (!$zip->extractTo(dirname($std_temp_file), array(basename($std_temp_file))))
+            {
+                throw new \Exception('Cannot extract output.txt to ' . $std_temp_file);
+            }
+            
+            $response = file_get_contents($std_temp_file);
+            unlink($std_temp_file);
             
             foreach ($output_files as $i => $path_for_this_file)
             {
