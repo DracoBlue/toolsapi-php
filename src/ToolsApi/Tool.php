@@ -1,6 +1,8 @@
 <?php
 namespace ToolsApi;
 
+use Guzzle\Http\Message\RequestInterface;
+
 class Tool
 {
     protected $request = null;
@@ -11,7 +13,7 @@ class Tool
     protected $local_file_as_stdout = null;
     protected $local_file_as_stderr = null;
     
-    public function __construct($request, $name)
+    public function __construct(RequestInterface $request, $name)
     {
         $this->request = $request;
         $this->name = $name;
@@ -131,6 +133,7 @@ class Tool
         
         if (count($output_folders) || $this->local_file_as_stdout || $this->local_file_as_stderr || count($output_files))
         {
+            $this->request->setHeader('Accept', 'application/zip');
             $temp_file = tempnam(sys_get_temp_dir(), 'ToolsApiResponse') . '.zip';
             $this->request->setResponseBody(fopen($temp_file, 'w'));
             $response = $this->request->send();
@@ -240,6 +243,7 @@ class Tool
         }
         else
         {
+            $this->request->setHeader('Accept', 'text/plain');
             $response = $this->request->send();
             return $response->getBody(true);
         }
