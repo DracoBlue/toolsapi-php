@@ -23,7 +23,7 @@ Create a toolsapi.properties in either your `$HOME`-directory or as `/etc/toolsa
 
 ## Run Tests
 
-$ make test
+    $ make test
 
 ## Changelog
 
