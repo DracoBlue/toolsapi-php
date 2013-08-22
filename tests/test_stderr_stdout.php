@@ -1,5 +1,7 @@
 <?php
 
+$output_directory = setupAndCleanTestOutputDirectory();
+
 /*
  * Let's see if stdout is valid
  */
@@ -17,10 +19,10 @@ $tool = $app->createTool('dig');
 $tool->addArgument('+time=1');
 $tool->addArgument('+tries=1');
 $tool->addArgument('toolsapi.com');
-$tool->pipeStdOutToLocalFile(dirname(__FILE__) . '/stderr-test-stdout.txt');
+$tool->pipeStdOutToLocalFile($output_directory . '/stderr-test-stdout.txt');
 $response = $tool->execute();
 assert(strlen(trim($response)) === 0);
-assert(strpos(file_get_contents(dirname(__FILE__) . '/stderr-test-stdout.txt'), 'toolsapi.com') !== false);
+assert(strpos(file_get_contents($output_directory . '/stderr-test-stdout.txt'), 'toolsapi.com') !== false);
 
 /*
  * and if normal response contains stderr output, too!
@@ -35,17 +37,17 @@ assert(strpos(strtolower($response), 'dig') !== false);
  */
 $tool = $app->createTool('dig');
 $tool->addArgument('-version');
-$tool->pipeStdErrToLocalFile(dirname(__FILE__) . '/stderr-test-stderr.txt');
+$tool->pipeStdErrToLocalFile($output_directory . '/stderr-test-stderr.txt');
 $response = $tool->execute();
 assert(strlen(trim($response)) === 0);
-assert(strpos(strtolower(file_get_contents(dirname(__FILE__) . '/stderr-test-stderr.txt')), 'dig') !== false);
+assert(strpos(strtolower(file_get_contents($output_directory . '/stderr-test-stderr.txt')), 'dig') !== false);
 
 /*
  * Let's see if response only contains stderr, if we piped stdout into a file
  */
 $tool = $app->createTool('dig');
 $tool->addArgument('-version');
-$tool->pipeStdOutToLocalFile(dirname(__FILE__) . '/stderr-test-stdout.txt');
+$tool->pipeStdOutToLocalFile($output_directory . '/stderr-test-stdout.txt');
 $response = $tool->execute();
 assert(strpos(strtolower($response), 'dig') !== false);
 
@@ -54,7 +56,7 @@ assert(strpos(strtolower($response), 'dig') !== false);
  */
 $tool = $app->createTool('dig');
 $tool->addArgument('-version');
-$tool->pipeStdOutToLocalFile(dirname(__FILE__) . '/stderr-test-stdout.txt');
-$tool->pipeStdErrToLocalFile(dirname(__FILE__) . '/stderr-test-stderr.txt');
+$tool->pipeStdOutToLocalFile($output_directory . '/stderr-test-stdout.txt');
+$tool->pipeStdErrToLocalFile($output_directory . '/stderr-test-stderr.txt');
 $response = $tool->execute();
 assert(strlen(trim($response)) === 0);

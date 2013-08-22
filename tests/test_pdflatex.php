@@ -1,23 +1,11 @@
 <?php
 
-if (is_dir(dirname(__FILE__) . '/pdflatex-out/'))
-{
-    foreach (glob(dirname(__FILE__) . '/pdflatex-out/*') as $filename)
-    {
-        unlink($filename);
-    }
-    rmdir(dirname(__FILE__) . '/pdflatex-out/');
-}
-
-if (is_file(dirname(__FILE__) . '/pdflatex-out-stdout.txt'))
-{
-    unlink(dirname(__FILE__) . '/pdflatex-out-stdout.txt');
-}
+$output_directory = setupAndCleanTestOutputDirectory();
 
 $tool = $app->createTool('pdflatex');
 $tool->addArgument('-output-directory');
-$tool->addLocalOutputFolder(dirname(__FILE__) . '/pdflatex-out/');
+$tool->addLocalOutputFolder($output_directory);
 $tool->addLocalFile(dirname(__FILE__) . '/fixtures/valid_latex.tex');
-$tool->pipeStdOutToLocalFile(dirname(__FILE__) . '/pdflatex-out-stdout.txt');
-$tool->pipeStdErrToLocalFile(dirname(__FILE__) . '/pdflatex-out-stderr.txt');
+$tool->pipeStdOutToLocalFile($output_directory . '/pdflatex-out-stdout.txt');
+$tool->pipeStdErrToLocalFile($output_directory . '/pdflatex-out-stderr.txt');
 $tool->execute();

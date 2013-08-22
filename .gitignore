@@ -1,3 +1,4 @@
 junit.xml
 vendor
 composer.phar
+tests/out/*
