@@ -4,7 +4,7 @@
 * Date: not-yet-released
 * Build Status: [![Build Status](https://secure.travis-ci.org/DracoBlue/toolsapi-php.png?branch=master)](http://travis-ci.org/DracoBlue/toolsapi-php)
 
-This is the official php client implementation of [toolsapi.com](http://toolsapi.com). It implements the latest [toolsapi http protocol](http://toolsapi.local/toolsapi-http-protocol).
+This is the official php client implementation of [toolsapi.com](http://toolsapi.com). It implements the latest [toolsapi http protocol](http://toolsapi.com/toolsapi-http-protocol).
 
 ## Installation Git Version
 
