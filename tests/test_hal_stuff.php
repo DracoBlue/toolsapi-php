@@ -14,7 +14,7 @@ $client->send(array($client->get(), $client->get()));
 /*
  * Test multiple requests at once (with and without json+hal)
  */
-$client->send(array($client->get(), $client->get('browser/browser.html')));
+$client->send(array($client->get(), $client->get('favicon.ico')));
 
 /*
  * Test retrieving rels with multiple values
@@ -25,7 +25,7 @@ $client->get()->send()->getLink('http://toolsapi.com/rels/tools')->get()->send()
 /*
  * Should give an invalid HAL response for api index, when navigation
  */
-$client = new \ToolsApi\HalClient('http://toolsapi.com/browser/browser.html');
+$client = new \ToolsApi\HalClient('http://toolsapi.com/favicon.ico');
 try
 {
     $client->navigateByLinks('http://toolsapi.com/rels/tools');
