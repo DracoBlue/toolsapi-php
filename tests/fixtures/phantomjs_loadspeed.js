@@ -7,6 +7,8 @@ if (system.args.length === 1) {
     phantom.exit();
 }
 
+page.settings.resourceTimeout = 3000;
+
 //page.onResourceRequested = function (q) {
 //    console.log('requested: ' + q.url + ' at ' + q.time.getTime());
 ////    console.log('requested: ' + JSON.stringify(req, undefined, 4));
@@ -22,9 +24,11 @@ address = system.args[1];
 page.open(address, function (status) {
     if (status !== 'success') {
         console.log(false);
+        phantom.exit();
+        return ;
     } else {
         t = Date.now() - t;
-        console.log('{"time": ' + t + '}');
+        console.log('{"time": ' + t + ', "path": ' + JSON.stringify(system.args[2] + '/output.png') + '}');
     }
     page.render(system.args[2] + '/output.png');
     phantom.exit();

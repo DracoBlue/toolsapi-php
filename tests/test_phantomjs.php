@@ -4,7 +4,7 @@ $output_directory = setupAndCleanTestOutputDirectory();
 
 $tool = $app->createTool('phantomjs');
 $tool->addLocalFile(dirname(__FILE__) . '/fixtures/phantomjs_loadspeed.js');
-$tool->addArgument('http://en.wikipedia.org/wiki/Main_Page');
+$tool->addArgument('http://example.org');
 $tool->addLocalOutputFolder($output_directory);
 #$tool->pipeStdOutToLocalFile($output_directory . '/phantomjs-out-stdout.txt');
 $response_raw = $tool->execute();
